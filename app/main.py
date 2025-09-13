@@ -47,3 +47,16 @@ async def read_items(q: str = Query(None, max_length=50, title="Search Query", d
     if q:
         items = [item for item in items if q.lower() in item["name"].lower()]
     return {"items": items}
+
+@app.get("/greet/")
+async def greet_user(name: str):
+    return {"message": f"Hello {name}, welcome to NotePilot!"}
+
+@app.get("/items/{item_id}/details")
+async def item_details(item_id: str, short: bool = False):
+    item = {"item_id": item_id}
+    if short:
+        item.update({"short_description": "This is a short summary of the item."})
+    else:
+        item.update({"long_description": "This is a long detailed description of the item."})
+    return item
