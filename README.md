@@ -50,22 +50,22 @@ Run the app:
 uvicorn main:app --reload
 ```
 ## ⚙️ API Endpoints
->> **Get Root Message**
->> GET /
-Returns a welcome message.
+> **Get Root Message**
+>> GET / \
+>> Returns a welcome message.
 
->> **Get Notes**
->>GET /notes
+> **Get Notes**
+>> GET /notes \
 Returns a list of predefined notes.
 
->> **Read an Item**
->>GET /items/{item_id}
-Requires header X-Token: coneofsilence.
+> **Read an Item**
+>> GET /items/{item_id} \
+Requires header X-Token: coneofsilence. \
 Returns the item details or errors for invalid tokens/nonexistent items.
 
->> **Create an Item**
-POST /items/
->>Requires header X-Token: coneofsilence.
+> **Create an Item**
+>> POST /items/ \
+>>Requires header X-Token: coneofsilence. \
 Creates a new note item with fields: id, title, description.
 
 ## Running Tests
