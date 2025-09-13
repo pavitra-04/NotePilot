@@ -52,6 +52,15 @@ async def read_items(q: str = Query(None, max_length=50, title="Search Query", d
 async def greet_user(name: str):
     return {"message": f"Hello {name}, welcome to NotePilot!"}
 
+@app.post("/welcome/")
+async def welcome_user(
+    name: str = Query(..., min_length=1, max_length=50, description="Your full name"),
+    x_token: Annotated[str, Header()]
+):
+    if x_token != fake_secret_token:
+        raise HTTPException(status_code=400, detail="Invalid X-Token header")
+    return {"message": f"Hello {name}, welcome to NotePilot."}
+
 @app.get("/items/{item_id}/details")
 async def item_details(item_id: str, short: bool = False):
     item = {"item_id": item_id}
