@@ -36,3 +36,14 @@ async def create_item(item: Item, x_token: Annotated[str, Header()]):
         raise HTTPException(status_code=409, detail="Item already exists")
     fake_db[item.id] = item
     return item
+
+from fastapi import FastAPI, Query
+
+
+
+@app.get("/items/")
+async def read_items(q: str = Query(None, max_length=50, title="Search Query", description="Search term to filter items")):
+    items = [{"item_id": "foo", "name": "Foo Item"}, {"item_id": "bar", "name": "Bar Item"}]
+    if q:
+        items = [item for item in items if q.lower() in item["name"].lower()]
+    return {"items": items}
