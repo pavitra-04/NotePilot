@@ -1,65 +1,33 @@
 from fastapi.testclient import TestClient
 
 from .main import app
+import re
 
 client = TestClient(app)
 
+def test_greet_valid_input():
+    response=client.get("/greet/?name=Pavitra")
+    assert response.status_code ==200
+    assert response.json()=={"message":"Hello Pavitra, welcome to NotePilot!"}
 
-def test_read_item():
-    response = client.get("/items/foo", headers={"X-Token": "coneofsilence"})
-    assert response.status_code == 200
-    assert response.json() == {
-        "id": "foo",
-        "title": "Foo",
-        "description": "There goes my hero",
-    }
+def test_greet_missing():
+    response=client.get("/greet/")
+    assert response.status_code ==422
 
+def test_greet_multiple():
+    response=client.get("/greet/?name=Abc xyz")
+    assert response.status_code ==200
+    assert response.json()=={"message":"Hello Abc xyz, welcome to NotePilot!"}
 
-def test_read_item_bad_token():
-    response = client.get("/items/foo", headers={"X-Token": "hailhydra"})
-    assert response.status_code == 400
-    assert response.json() == {"detail": "Invalid X-Token header"}
-
-
-def test_read_nonexistent_item():
-    response = client.get("/items/baz", headers={"X-Token": "coneofsilence"})
-    assert response.status_code == 404
-    assert response.json() == {"detail": "Item not found"}
+def test_greet_special_char():
+    response = client.get("/greet/?name=Abc@123")
+    assert response.status_code == 403
+    assert response.json() == {"message": "Invalid name. Special characters are not allowed."}
 
 
-def test_create_item():
-    response = client.post(
-        "/items/",
-        headers={"X-Token": "coneofsilence"},
-        json={"id": "foobar", "title": "Foo Bar", "description": "The Foo Barters"},
-    )
-    assert response.status_code == 200
-    assert response.json() == {
-        "id": "foobar",
-        "title": "Foo Bar",
-        "description": "The Foo Barters",
-    }
+def test_greet_multiple_param():
+    response=client.get("/greet/?name=Abc&age=12")
+    assert response.status_code ==200
+    assert response.json()=={"message":"Hello Abc, welcome to NotePilot!"}
 
 
-def test_create_item_bad_token():
-    response = client.post(
-        "/items/",
-        headers={"X-Token": "hailhydra"},
-        json={"id": "bazz", "title": "Bazz", "description": "Drop the bazz"},
-    )
-    assert response.status_code == 400
-    assert response.json() == {"detail": "Invalid X-Token header"}
-
-
-def test_create_existing_item():
-    response = client.post(
-        "/items/",
-        headers={"X-Token": "coneofsilence"},
-        json={
-            "id": "foo",
-            "title": "The Foo ID Stealers",
-            "description": "There goes my stealer",
-        },
-    )
-    assert response.status_code == 409
-    assert response.json() == {"detail": "Item already exists"}
