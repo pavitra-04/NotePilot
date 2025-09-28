@@ -22,7 +22,7 @@ def test_greet_multiple():
 def test_greet_special_char():
     response = client.get("/greet/?name=Abc@123")
     assert response.status_code == 200
-    assert response.json() == {"message": "Invalid name. Special characters are not allowed."}
+    assert response.json() == {"message":"Invalid name. Special characters are not allowed."}
 
 
 def test_greet_multiple_param():
